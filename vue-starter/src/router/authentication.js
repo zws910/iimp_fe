@@ -5,12 +5,12 @@ export default [{
   component: LayoutBlank,
   children: [
     {
-    path: 'login',
-    component: () => import('@/components/authentication/Login.vue')
-  },
-  {
-    path: 'register',
-    component: () => import('@/components/authentication/Register.vue')
-  }
-]
+      path: 'login',
+      component: () => import('@/components/authentication/Login.vue')
+    },
+    {
+      path: 'register',
+      component: () => import('@/components/authentication/Register.vue')
+    }
+  ]
 }]

@@ -10,7 +10,9 @@ import globals from '@/globals'
 import homeRoutes from './home'
 import timelineRoutes from './timeline'
 import editorsRoutes from './editors'
+import marketsRoutes from './markets'
 import authRoutes from './authentication'
+import testRoutes from './test'
 
 Vue.use(Router)
 Vue.use(Meta)
@@ -22,7 +24,9 @@ const ROUTES = [
   .concat(homeRoutes)
   .concat(timelineRoutes)
   .concat(editorsRoutes)
+  .concat(marketsRoutes)
   .concat(authRoutes)
+  .concat(testRoutes)
 
 const router = new Router({
   base: '/',

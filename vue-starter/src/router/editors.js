@@ -6,7 +6,7 @@ export default [{
   children: [{
     path: 'info',
     component: () => import('@/components/editors/EditorsInfo.vue')
-  },{
+  }, {
     path: 'focus',
     component: () => import('@/components/editors/EditorsFocus.vue')
   }]

@@ -7,6 +7,13 @@
       <sidenav-router-link icon="ion ion-md-desktop" to="/" :exact="true">首页</sidenav-router-link>
       <sidenav-router-link icon="ion ion-md-speedometer" to="/timeline" :exact="true">时间轴</sidenav-router-link>
 
+      <!-- Markets -->
+      <sidenav-menu icon="ion ion-md-pie">
+        <template slot="link-text">行情</template>
+        <sidenav-router-link to="/markets/unusual">盘中异动</sidenav-router-link>
+        <!-- <sidenav-router-link to="/editors/focus">事件发布</sidenav-router-link> -->
+      </sidenav-menu>
+
       <!-- Editors -->
       <sidenav-menu icon="ion ion-md-document" v-show="is_employee">
         <template slot="link-text">发布</template>
@@ -47,7 +54,7 @@ export default {
     token: sessionStorage.token || localStorage.token,
     username: '',
     nickname: '',
-    is_employee: 0,
+    is_employee: 0
   }),
 
   mounted () {
@@ -89,23 +96,23 @@ export default {
 
     checkLogin () {
       if (this.user_id && this.token) {
-        var url = this.$host + '/user-profile/';
+        var url = this.$host + '/user-profile/'
         this.$ajax.get(url, {
           headers: {
             'Authorization': 'JWT ' + this.token
           },
-          responseType: 'json',
+          responseType: 'json'
         }).then(res => {
           // 加载用户数据
-          this.user_id = res.data.id;
-          this.username = res.data.username;
-          this.nickname = res.data.nickname;
-          this.is_employee = res.data.is_employee;
+          this.user_id = res.data.id
+          this.username = res.data.username
+          this.nickname = res.data.nickname
+          this.is_employee = res.data.is_employee
         }).catch(error => {
-          if (error.response.status==401 || error.response.status==403) {
+          if (error.response.status == 401 || error.response.status == 403) {
             location.href = '/authentication/login'
           }
-        });
+        })
       } else {
         location.href = '/authentication/login'
       }

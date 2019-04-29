@@ -89,38 +89,38 @@ export default {
     token: sessionStorage.token || localStorage.token,
     error_username: false,
     error_pwd: false,
-    error_pwd_message: "请填写密码",
+    error_pwd_message: '请填写密码'
   }),
   methods: {
     // 获取url路径参数
-    get_query_string(name) {
-      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-      var r = window.location.search.substr(1).match(reg);
+    get_query_string (name) {
+      var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+      var r = window.location.search.substr(1).match(reg)
       if (r != null) {
-        return decodeURI(r[2]);
+        return decodeURI(r[2])
       }
-      return null;
+      return null
     },
     // 检查数据
-    check_username() {
+    check_username () {
       if (!this.credentials.username) {
-        this.error_username = true;
+        this.error_username = true
       } else {
-        this.error_username = false;
+        this.error_username = false
       }
     },
-    check_pwd() {
+    check_pwd () {
       if (!this.credentials.password) {
-        this.error_pwd_message = "请填写密码";
-        this.error_pwd = true;
+        this.error_pwd_message = '请填写密码'
+        this.error_pwd = true
       } else {
-        this.error_pwd = false;
+        this.error_pwd = false
       }
     },
-    onSubmit() {
+    onSubmit () {
       var url = this.$host + '/authorizations/'
-      this.check_username();
-      this.check_pwd();
+      this.check_username()
+      this.check_pwd()
 
       if (this.error_username == false && this.error_pwd == false) {
         this.$ajax.post(url, {
@@ -131,22 +131,22 @@ export default {
           withCredentials: true
         }).then(response => {
           // 浏览器本地存储token
-          sessionStorage.clear();
-          localStorage.token = response.data.token;
-          localStorage.user_id = response.data.user_id;
-          localStorage.username = response.data.username;
+          sessionStorage.clear()
+          localStorage.token = response.data.token
+          localStorage.user_id = response.data.user_id
+          localStorage.username = response.data.username
 
           // 跳转页面
-          var return_url = this.get_query_string('next');
+          var return_url = this.get_query_string('next')
           if (!return_url) {
-            return_url = '/';
+            return_url = '/'
           }
-          location.href = return_url;
+          location.href = return_url
         }).catch(error => {
           if (error.response.status == 400) {
-            this.error_pwd_message = "用户名或密码错误"
+            this.error_pwd_message = '用户名或密码错误'
           } else {
-            this.error_pwd_message = "服务器错误"
+            this.error_pwd_message = '服务器错误'
           }
           this.error_pwd = true
         })

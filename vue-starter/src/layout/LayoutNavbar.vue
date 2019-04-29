@@ -176,17 +176,17 @@ export default {
       default: true
     }
   },
-  
+
   data: () => ({
     user_id: sessionStorage.user_id || localStorage.user_id,
     token: sessionStorage.token || localStorage.token,
     username: '',
     nickname: '',
-    is_employee: '',
+    is_employee: ''
   }),
 
-  mounted() {
-    this.checkLogin();
+  mounted () {
+    this.checkLogin()
   },
 
   methods: {
@@ -200,32 +200,32 @@ export default {
 
     checkLogin () {
       if (this.user_id && this.token) {
-        var url = this.$host + '/user-profile/';
+        var url = this.$host + '/user-profile/'
         this.$ajax.get(url, {
           headers: {
             'Authorization': 'JWT ' + this.token
           },
-          responseType: 'json',
+          responseType: 'json'
         }).then(res => {
           // 加载用户数据
-          this.user_id = res.data.id;
-          this.username = res.data.username;
-          this.nickname = res.data.nickname;
-          this.is_employee = res.data.is_employee;
+          this.user_id = res.data.id
+          this.username = res.data.username
+          this.nickname = res.data.nickname
+          this.is_employee = res.data.is_employee
         }).catch(error => {
-          if (error.response.status==401 || error.response.status==403) {
+          if (error.response.status == 401 || error.response.status == 403) {
             location.href = '/authentication/login'
           }
-        });
+        })
       } else {
         location.href = '/authentication/login'
       }
     },
 
     logout () {
-      sessionStorage.clear();
-      localStorage.clear();
-      location.href = '/authentication/login';
+      sessionStorage.clear()
+      localStorage.clear()
+      location.href = '/authentication/login'
     }
   }
 }

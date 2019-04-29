@@ -83,7 +83,6 @@
   </div>
 </template>
 
-
 <style lang="scss">
 .ql-container.ql-snow {
   height: 400px;
@@ -115,7 +114,7 @@ export default {
       date: '',
       action: '',
       target: '',
-      rating: 0,
+      rating: 0
     },
     focusList: [],
     focus: { 5: '默认' },
@@ -127,36 +126,36 @@ export default {
   },
   mounted () {
     // this.getInfoCats()
-    this.getFocus();
+    this.getFocus()
   },
   methods: {
     getFocus () {
-      var url = this.$host + '/focus/';
+      var url = this.$host + '/focus/'
       this.$ajax.get(url, {
-        params: {is_top: 0},
+        params: { is_top: 0 }
       }).then(res => {
         // this.focusList = res.data
-        for (var i=0; i<res.data.length; i++) {
+        for (var i = 0; i < res.data.length; i++) {
           this.focus[res.data[i].id] = res.data[i].title
         }
         // console.log(this.focusList);
       })
     },
     focusSubmit () {
-      var url = this.$host + '/focus/';
-      var username = 'admin';
+      var url = this.$host + '/focus/'
+      var username = 'admin'
       var postData = {
         title: this.focusData.title,
         start_date: this.focusData.startDate,
         end_date: this.focusData.endDate,
         author: username,
-        is_top: 0,
+        is_top: 0
       }
       this.$ajax.post(url, postData, {
         responseType: 'json'
       }).then(response => {
-        alert("发布成功");
-        window.location.reload();
+        alert('发布成功')
+        window.location.reload()
       }).catch(error => {
         if (error.response.status == 400) {
           console.log(error.response.data)
@@ -166,8 +165,8 @@ export default {
       })
     },
     eventSubmit () {
-      var url = this.$host + '/events/';
-      var username = 'admin';
+      var url = this.$host + '/events/'
+      var username = 'admin'
       var postData = {
         content: this.eventData.content,
         est_date: this.eventData.date,
@@ -182,7 +181,7 @@ export default {
         responseType: 'json'
       }).then(response => {
         alert('发布成功')
-        window.location.reload();
+        window.location.reload()
       }).catch(error => {
         if (error.response.status == 400) {
           console.log(error.response.data)
@@ -190,7 +189,7 @@ export default {
           console.log(error.response.status)
         }
       })
-    },
+    }
   }
 }
 </script>

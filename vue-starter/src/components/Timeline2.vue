@@ -116,7 +116,7 @@
           </b-collapse>
       </div>
        <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-          <div class="row"> 
+          <div class="row">
             <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4" v-for="(item,i) in list" :key="i">
             <div>
             <center>
@@ -233,7 +233,7 @@
             </div>
             </div>
            </div>
-      </div> 
+      </div>
     </div>
   </div>
 </template>

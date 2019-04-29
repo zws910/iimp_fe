@@ -80,7 +80,7 @@
 <style src="@/vendor/styles/pages/authentication.scss" lang="scss"></style>
 
 <script>
-import { truncate, truncateSync } from 'fs';
+import { truncate, truncateSync } from 'fs'
 export default {
   name: 'pages-authentication-register-v3',
   metaInfo: {
@@ -91,36 +91,36 @@ export default {
       username: '',
       nickname: '',
       password: '',
-      password2: '',
+      password2: ''
     },
     error_name: false,
     error_nickname: false,
     error_password: false,
     error_check_password: false,
     error_name_message: '',
-    error_nickname_message: '',
+    error_nickname_message: ''
 
   }),
   methods: {
     // 检查用户名
-    checkUsername() {
-      var len = this.credentials.username.length;
+    checkUsername () {
+      var len = this.credentials.username.length
       if (len < 5 || len > 20) {
-        this.error_name_message = '请输入5-20个字符的用户名';
+        this.error_name_message = '请输入5-20个字符的用户名'
         this.error_name = true
       } else {
         this.error_name = false
       }
       // 检查重名
       if (this.error_name == false) {
-        this.$ajax.get(this.$host+'/usernames/'+this.credentials.username+'/count/', {
+        this.$ajax.get(this.$host + '/usernames/' + this.credentials.username + '/count/', {
           responseType: 'json'
         }).then(response => {
           if (response.data.count > 0) {
-            this.error_name_message = '用户名已存在';
+            this.error_name_message = '用户名已存在'
             this.error_name = true
           } else {
-            this.error_name = false;
+            this.error_name = false
           }
         }).catch(error => {
           console.log(error)
@@ -128,13 +128,13 @@ export default {
       }
     },
     // 检查昵称
-    checkNickname() {
-      var len = this.credentials.nickname.length;
+    checkNickname () {
+      var len = this.credentials.nickname.length
       if (len < 5 || len > 20) {
-        this.error_nickname_message = '请输入5-20个字符的昵称';
-        this.error_nickname = true;
+        this.error_nickname_message = '请输入5-20个字符的昵称'
+        this.error_nickname = true
       } else {
-        this.error_nickname = false;
+        this.error_nickname = false
       }
       // 检查重名
       if (this.error_nickname == false) {
@@ -142,10 +142,10 @@ export default {
           responseType: 'json'
         }).then(response => {
           if (response.data.count > 0) {
-            this.error_nickname_message = '昵称已存在';
-            this.error_nickname = true;
+            this.error_nickname_message = '昵称已存在'
+            this.error_nickname = true
           } else {
-            this.error_nickname = false;
+            this.error_nickname = false
           }
         }).catch(error => {
           console.log(error)
@@ -154,11 +154,11 @@ export default {
     },
     // 检查密码
     checkPwd () {
-      var len = this.credentials.password.length;
-      if (len < 8 || len>20) {
+      var len = this.credentials.password.length
+      if (len < 8 || len > 20) {
         this.error_password = true
       } else {
-        this.error_password = false;
+        this.error_password = false
       }
     },
     // 检查确认密码
@@ -171,27 +171,27 @@ export default {
     },
     // 点击注册
     onSubmit () {
-      this.checkUsername();
-      this.checkPwd();
-      this.checkCpwd();
+      this.checkUsername()
+      this.checkPwd()
+      this.checkCpwd()
 
       if (this.error_name == false && this.error_password == false && this.error_check_password == false) {
         this.$ajax.post(this.$host + '/users/', {
           username: this.credentials.username,
           password: this.credentials.password,
-          password_repeat: this.credentials.password2,
+          password_repeat: this.credentials.password2
         }, {
           responseType: 'json'
         }).then(response => {
           // 记录用户的登录状态
-          sessionStorage.clear();
-          localStorage.clear();
+          sessionStorage.clear()
+          localStorage.clear()
 
-          localStorage.token = response.data.token;
-          localStorage.username = response.data.username;
-          localStorage.user_id = response.data.id;
+          localStorage.token = response.data.token
+          localStorage.username = response.data.username
+          localStorage.user_id = response.data.id
 
-          location.href = '/';
+          location.href = '/'
         }).catch(error => {
           if (error.response.status == 400) {
             console.log(error.response.data)
