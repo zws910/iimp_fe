@@ -1,0 +1,24 @@
+.news-item-intro {
+  display: inline-block;
+  padding-top: 10px;
+  margin-right: 12px;
+}
+
+.stock-group {
+  display: inline-block;
+  font-size: 12px;
+}
+
+.stock-group-item {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.stock-group-item-name {
+  display: inline-block;
+}
+
+.stock-group-item-rate {
+  display: inline-block;
+  margin-left: 3px
+}
