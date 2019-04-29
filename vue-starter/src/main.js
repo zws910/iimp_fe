@@ -18,7 +18,7 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 axios.interceptors.request.use((config) => {
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
-  let regex = /.*csrftoken=([^;,]).*$/
+  let regex = /.*csrftoken=([^;.]*).*$/;
   config.headers['X-CSRFToken'] = document.cookie.match(regex) === null ? null : document.cookie.match(regex)[1]
   return config
 })
