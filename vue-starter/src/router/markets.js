@@ -7,10 +7,10 @@ export default [{
     {
       path: 'unusual',
       component: () => import('@/components/markets/Unusual.vue')
+    },
+    {
+    path: 'daily-abnormal',
+    component: () => import('@/components/markets/Abnormal.vue')
     }
-    // {
-    // path: 'focus',
-    // component: () => import('@/components/editors/EditorsFocus.vue')
-    // }
   ]
 }]

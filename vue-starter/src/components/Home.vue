@@ -6,26 +6,65 @@
     </h4> -->
 
     <div class="row">
-      <div class="col-md-6 col-lg-12 col-xl-6 mb-4">
-        <swiper class="swiper-container" :options="verticalSwiper" id="swiper-vertical">
-        <swiper-slide v-for="data in abnormalData" :key="data.code">
-              <div class="media-body ml-3">
-                <a href="javascript:void(0)">{{ data.name }}</a>
-                <span class="text-muted">{{ data.type }}</span>
-                <!-- <a href="javascript:void(0)">Article Name</a> -->
-                <span class="text-muted small">{{ data.event_timestamp }}</span>
-                <p class="my-1">大幅拉升{{ data.target }}</p>
-                <!-- <p class="my-1">{{ data.type }}</p> -->
+      <div class="col-md-6 col-lg-12 col-xl-6">
+        <b-card no-body class="mb-4">
+          <b-card-header header-tag="h6" class="with-elements">
+            <div class="card-header-title">大幅拉升</div>
+            <div class="card-header-elements ml-auto">
+              <b-btn variant="default" style="float: right" v-b-modal.modal-scrollable>查看今日所有数据</b-btn>
+              <b-modal id="modal-scrollable" scrollable title="Scrollable Content">
+                <p class="my-4" v-for="i in 20" :key="i">
+                  Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
+                  in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                </p>
+              </b-modal>
+            </div>
+          </b-card-header>
+          <swiper class="swiper-container" :options="verticalSwiper" id="swiper-vertical">
+          <swiper-slide v-for="data in abnormalData" :key="data.code">
+                <div class="abnormal-alert">
+                  <a href="javascript:void(0)">{{ data.author }}</a>
+                  <span class="text-muted">发布于</span>
+                  <!-- <a href="javascript:void(0)">Article Name</a> -->
+                  <span class="text-muted small">{{ data.pub_timestamp*1000 | formatDate }}</span>
+                  <p class="my-1">{{ data.title }}</p>
+                  <p class="my-1">{{ data.content }}</p>
+                  <!-- <p class="my-1">{{ data.targets }}</p> -->
+                  <div class="clearfix">
+                    <div class="news-item-intro">
+                      <ul class="stock-group" v-for="target in data.targets" :key="target">
+                        <li class="stock-group-item">
+                          <span class="stock-group-name">{{ marketsData[target] | formatName }}</span>
+                          <span class="stock-group-rate">{{ marketsData[target] | formatRate }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+          </swiper-slide>
+          <!-- <swiper-slide>I'm Slide 2</swiper-slide>
+          <swiper-slide>I'm Slide 3</swiper-slide>
+          <swiper-slide>I'm Slide 4</swiper-slide>
+          <swiper-slide>I'm Slide 5</swiper-slide> -->
+          <div slot="pagination" class="swiper-pagination"></div>
+          </swiper>
+        </b-card>
+        <h6 style="text-align:center; position: relative; top: 45%" v-show="!abnormalData">暂时没有关注的股票有大幅拉升</h6>
 
-                <span><hr></span>
-              </div>
-        </swiper-slide>
-        <!-- <swiper-slide>I'm Slide 2</swiper-slide>
-        <swiper-slide>I'm Slide 3</swiper-slide>
-        <swiper-slide>I'm Slide 4</swiper-slide>
-        <swiper-slide>I'm Slide 5</swiper-slide> -->
-        <div slot="pagination" class="swiper-pagination"></div>
-      </swiper>
+      </div>
+
+      <div class="col-xl-6 p-4">
+        <small class="text-light font-weight-semibold">生成PLUS内参</small>
+        <div class="demo-inline-spacing mt-3">
+          <b-btn variant="outline-primary rounded-pill">本周</b-btn>
+          <b-btn variant="outline-secondary rounded-pill">Secondary</b-btn>
+          <!-- <b-btn variant="outline-default rounded-pill">Default</b-btn>
+          <b-btn variant="outline-success rounded-pill">Success</b-btn>
+          <b-btn variant="outline-warning rounded-pill">Warning</b-btn>
+          <b-btn variant="outline-info rounded-pill">Info</b-btn>
+          <b-btn variant="outline-danger rounded-pill">Danger</b-btn>
+          <b-btn variant="outline-dark rounded-pill">Dark</b-btn> -->
+        </div>
       </div>
     </div>
 
@@ -126,14 +165,16 @@
 
 <style>
 .swiper-container .swiper-slide {
-  padding: 5rem 0;
-  text-align: center;
-  font-size: 1.5rem;
+  padding: 2.5rem 46px;
   background: #ffffff;
 }
 
 #swiper-vertical {
   max-height: 195px;
+}
+
+.abnormal-alert {
+  padding: 5px;
 }
 </style>
 <style src="@/vendor/libs/vue-awesome-swiper/vue-awesome-swiper.scss" lang="scss"></style>
@@ -202,6 +243,10 @@ export default {
 
     verticalSwiper: {
       direction: 'vertical',
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false
+      },
       pagination: {
         el: '.swiper-pagination',
         clickable: true
@@ -215,7 +260,7 @@ export default {
   created () {
     // this.initWebSocket()
     this.pollRealMarket()
-    this.pollUnusualData()
+    // this.pollUnusualData()
     this.pollAbnormal()
   },
   mounted () {
@@ -225,7 +270,7 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.polling_real_market)
-    clearInterval(this.polling_unusual_data)
+    // clearInterval(this.polling_unusual_data)
     clearInterval(this.polling_abnormal)
   },
   destroyed () {
@@ -317,6 +362,7 @@ export default {
           }
         }).then(response => {
           this.marketsData = response.data
+          
         })
       }
     },
@@ -358,13 +404,13 @@ export default {
       }, 10000)
     },
 
-    // 请求 异动提醒 大幅拉升
+    // 请求 异动提醒 大幅拉升 (选股宝爬虫)
     getAbnormal () {
       this.$ajax.get(
         this.$host + '/abnormal/'
       ).then(res => {
         console.log(res.data)
-        // this.abnormalData =res.data;
+        this.abnormalData = res.data;
       }
       )
       // console.log(this.items)
@@ -374,7 +420,13 @@ export default {
       this.polling_abnormal = setInterval(() => {
         this.getAbnormal()
       }, 10000)
-    }
+    },
+
+    // 跳转 查看今日所有大幅拉升
+    toDailyAbnormal () {
+      var url = this.$host + '/markets/daily-abnormal/';
+      window.open(url);
+    },
   },
 
   filters: {
