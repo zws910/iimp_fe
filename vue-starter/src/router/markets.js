@@ -9,8 +9,8 @@ export default [{
       component: () => import('@/components/markets/Unusual.vue')
     },
     {
-    path: 'daily-abnormal',
-    component: () => import('@/components/markets/Abnormal.vue')
+      path: 'daily-abnormal',
+      component: () => import('@/components/markets/Abnormal.vue')
     }
   ]
 }]

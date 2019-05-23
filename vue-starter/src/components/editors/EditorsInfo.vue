@@ -17,6 +17,7 @@
             <b-select
               v-model="articleData.category"
               :options="category"
+              class="flex-grow-1 col-3"
             />
           </b-form-group>
 
@@ -79,11 +80,11 @@ export default {
   data: () => ({
     articleData: {
       title: '',
-      category: 1,
+      category: 8,
       content: ''
     },
     cats: [],
-    category: { 1: 'default' },
+    category: { 8: 'default' },
 
     shares: [],
     selected: null,

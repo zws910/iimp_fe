@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <b-form @submit.prevent="focusSubmit" class="col-6">
+      <!-- <b-form @submit.prevent="focusSubmit" class="col-6">
         <b-card no-body >
           <h4 class="font-weight-bold ml-4 mt-4">
             焦点发布
@@ -19,34 +19,30 @@
               <input type="date" class="form-control" v-model="focusData.endDate">
             </b-form-group>
 
-            <!-- <b-form-group label="Keywords">
-              <b-input v-model="articleData.meta.keywords" />
-            </b-form-group>-->
           </b-card-body>
 
           <div class="text-right mb-3 mr-4">
           <b-btn variant="primary" type="submit">提交</b-btn>&nbsp;
-          <!-- <b-btn variant="default">Cancel</b-btn> -->
           </div>
         </b-card>
-      </b-form>
+      </b-form> -->
 
-      <b-form @submit.prevent="eventSubmit" class="col-6">
+      <b-form @submit.prevent="eventSubmit" class="col-12">
         <b-card no-body >
           <h4 class="font-weight-bold ml-4 mt-4">
             事件发布
           </h4>
           <b-card-body class="pb-2">
-            <!-- <b-form-group label="标题">
-              <b-input v-model="articleData.title" required/>
-            </b-form-group> -->
+            <b-form-group label="标题">
+              <b-textarea v-model="eventData.title" required/>
+            </b-form-group>
 
-            <b-form-group label="选择焦点">
+            <!-- <b-form-group label="选择焦点">
               <b-select
                 v-model="eventData.focus"
                 :options="focus"
               />
-            </b-form-group>
+            </b-form-group> -->
 
             <b-form-group label="事件内容">
               <b-textarea v-model="eventData.content" :rows="3" required/>
@@ -61,7 +57,7 @@
             </b-form-group>
 
             <b-form-group label="标的">
-              <b-input v-model="eventData.target" required/>
+              <b-textarea v-model="eventData.target" required/>
             </b-form-group>
 
             <b-form-group label="评级">

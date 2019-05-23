@@ -22,3 +22,23 @@
   display: inline-block;
   margin-left: 3px
 }
+
+.news-item-title {
+  display: block;
+  font-family: inherit;
+  white-space: pre-wrap;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: 26px;
+  word-wrap: break-word;
+}
+
+.news-item-detail {
+  font-family: inherit;
+  white-space: pre-wrap;
+  font-size: 14px;
+  color: #666666;
+  letter-spacing: 0;
+  line-height: 26px;
+  word-wrap: break-word;
+}

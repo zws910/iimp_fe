@@ -1,0 +1,188 @@
+* {
+    padding: 0;
+  }
+  .rat {
+    color: red;
+  }
+  
+  .moveUp {
+    /*箭头占位符，规定宽高等*/
+    width: 29px;
+    height: 28px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+  }
+  .moveUp:before,
+  .moveUp:after {
+    /*伪元素相同属性提取*/
+    content: "";
+    border-color: transparent; /*边框颜色透明*/
+    border-style: solid;
+    position: absolute; /*绝对定位，分别定位before和after描绘的内容*/
+  }
+  .moveUp:before {
+    /*伪元素before绘制箭头尾部矩形*/
+    border: none;
+    background: #555;
+    height: 84%;
+    width: 17%;
+    top: -1%;
+    left: 13px;
+  }
+  .moveUp:after {
+    /*伪元素after绘制箭头的头部三角形*/
+    left: 6px;
+    top: 84%;
+    border-width: 10px;
+    border-top-color: #555;
+  }
+  .moveDown {
+    width: 5px;
+    height: 33px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+  }
+  .move-line {
+    width: 5px;
+    height: 21px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+  }
+  .moveDown:before,
+  .moveDown:after,
+  .move-line:before {
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+    position: absolute;
+  }
+  .moveDown:before {
+    border: none;
+    background: #555;
+    height: 103%;
+    width: 30%;
+    top: 0%;
+    left: 210px;
+  }
+  .move-line:before {
+    border: none;
+    background: #555;
+    height: 103%;
+    width: 30%;
+    top: 18%;
+    left: -42px;
+  }
+  .moveDown:after {
+    left: 204px;
+    top: 98%;
+    border-width: 7px;
+    border-top-color: #555;
+  }
+  
+  .arror {
+    width: 100px;
+    height: 31px;
+    display: inline-block;
+    position: relative;
+  }
+  .arror:before,
+  .arror:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-color: transparent; /*统一规定边框颜色为透明色*/
+  }
+  .arror:before {
+    width: 281px;
+    height: 23px;
+    border: 1px solid #000;
+    border-bottom: 1px solid transparent;
+    left: 64px;
+    top: 13px;
+  }
+  .arror:after {
+    /*三角形*/
+    border-width: 7px;
+    border-left-color: #555;
+    top: 30px;
+    left: 338px;
+    transform: rotate(89deg);
+  }
+  .arror-l {
+    width: 100px;
+    height: 31px;
+    display: inline-block;
+    position: relative;
+  }
+  .arror-l:before,
+  .arror-l:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-color: transparent; /*统一规定边框颜色为透明色*/
+  }
+  .arror-l:before {
+    border-width: 7px;
+    border-left-color: #555;
+    top: 30px;
+    left: -45px;
+    transform: rotate(89deg);
+  }
+  .title-nav {
+    position: absolute;
+    top: 39px;
+    left: 8px;
+  }
+  .title-nav-a {
+    position: absolute;
+    top: 39px;
+    left: 149px;
+  }
+  .title-nav-b {
+    position: absolute;
+    top: 39px;
+    left: 289px;
+  }
+  .title {
+    width: 125px;
+    height: 37px;
+    margin: 0px;
+    text-align: center;
+  }
+  .cardtest {
+    width: 125px;
+    font-size: 12px;
+    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .cardtest .card-body {
+    padding: 10px;
+  }
+  .arror-e {
+    width: 100px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+  }
+  .arror-e:before,
+  .arror-e:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-color: transparent; /*统一规定边框颜色为透明色*/
+  }
+  .star-main {
+    float: right;
+  }
+  .arror-e:before {
+    border-width: 7px;
+    border-left-color: #555;
+    top: -7px;
+    left: 56px;
+    transform: rotate(270deg);
+  }
+  .swiper-slide{
+    margin-right:0px !important;
+}

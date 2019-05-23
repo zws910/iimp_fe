@@ -18,7 +18,7 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 axios.interceptors.request.use((config) => {
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
-  let regex = /.*csrftoken=([^;.]*).*$/;
+  let regex = /.*csrftoken=([^;.]*).*$/
   config.headers['X-CSRFToken'] = document.cookie.match(regex) === null ? null : document.cookie.match(regex)[1]
   return config
 })
@@ -26,8 +26,8 @@ axios.interceptors.request.use((config) => {
 Vue.prototype.$ajax = axios
 
 // Global hosts
-// Vue.prototype.$host = 'http://106.14.4.121:8000'
-Vue.prototype.$host = 'http://127.0.0.1:8000'
+Vue.prototype.$host = 'http://106.14.4.121:8000'
+// Vue.prototype.$host = 'http://127.0.0.1:8000'
 
 Vue.use(BootstrapVue)
 
