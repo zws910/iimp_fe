@@ -9,5 +9,8 @@ export default [{
   }, {
     path: 'focus',
     component: () => import('@/components/editors/EditorsFocus.vue')
+  }, {
+    path: 'events/:id',
+    component: () => import('@/components/editors/EditorsEvents.vue')
   }]
 }]

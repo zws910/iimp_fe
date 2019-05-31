@@ -31,6 +31,9 @@ Vue.prototype.$host = 'http://106.14.4.121:8000'
 
 Vue.use(BootstrapVue)
 
+import PortalVue from 'portal-vue'
+Vue.use(PortalVue)
+
 // Global RTL flag
 Vue.mixin({
   data: globals

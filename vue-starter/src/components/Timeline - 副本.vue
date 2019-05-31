@@ -3,18 +3,10 @@
     <!-- <h4 class="font-weight-bold py-3 mb-4">时间轴</h4> -->
     <!-- <hr class="container-m-nx border-light mt-0 mb-4"> -->
     <!-- 时间轴代码写在下方 -->
-    <div style="display:flex">
-      <b-form-group label="开始日期">
-        <input type="date" class="form-control" v-model="startDate">
-      </b-form-group>
-      <b-form-group style="margin-left:30px" label="结束日期">
-        <input type="date" class="form-control" v-model="endDate">
-      </b-form-group>
-      <button
-        class="btn btn-primary btn-sm"
-        style="width:80px;height:37px;margin-top:25px;margin-left:30px"
-        @click="filterEvents"
-      >查看</button>
+    <div>
+      <input type="date" name id="startDate" v-model="startDate">
+      <input type="date" name id="endDate" v-model="endDate">
+      <button class="btn btn-primary btn-sm" @click="filterEvents">查看</button>
     </div>
     <div style="width:100%;min-height:300px;background:#eee;">
       <div>
@@ -23,37 +15,29 @@
             <div style="width:240px;padding-top:5px;">
               <div
                 class="card card-condenced mt-3"
-                style="max-width:20rem;height:470px;margin-bottom:10px;font-family:Simsun;"
+                style="max-width:20rem;height:470px;margin-bottom:10px"
               >
                 <div class="card-header">
                   <span style="color:red">{{item.est_date}}</span>
                   <b-btn size="sm" variant="default" @click="seeEdit(item.id)">编辑</b-btn>
                   <b-btn size="sm" variant="default" :id="item.id" v-b-modal="'f'+item.id">详情</b-btn>
-                  <b-modal size="xl" :id="'f'+item.id" scrollable :title="item.title">
-                    <div>
-                      <b style="color:red">事件</b>
-                      <pre class="my-4" v-html="item.content" wrap="soft"></pre>
-                    </div>
-                    <div>
-                      <b style="color:red">更新</b>
-                      <pre class="my-4" v-html="item.update" wrap="soft"></pre>
-                    </div>
-                    <div>
-                      <b style="color:red">可行性分析</b>
-                      <pre class="my-4" v-html="item.feasibility" wrap="soft"></pre>
-                    </div>
+                  <b-modal size="xl" :id="'f'+item.id" scrollable :title='item.title'>
+                    <pre class="my-4" v-html="item.content" wrap="soft"></pre>
                     <span>
-                      <b style="color:red">标的</b>
+                      <p style="color:red">标的</p>
                       <pre class="my-4" v-html="item.target" wrap="soft"></pre>
                     </span>
-                    <div slot="modal-footer">
-                      <!-- <b-btn class="modal-cancel" name="modal-cancel" slot="modal-cancel">生成</b-btn> -->
-                      <b-btn
-                        class="modal-ok"
-                        variant="danger"
-                        name="modal-ok"
-                        @click="PlusDown(item.id)"
-                      >下载</b-btn>
+
+                     <div slot="modal-footer" class="w-100">
+                      <p class="float-left">Modal Footer Content</p>
+                      <b-button
+                        variant="primary"
+                        size="sm"
+                        class="float-right"
+                        @click="show=false"
+                      >
+                        Close
+                      </b-button>
                     </div>
                   </b-modal>
                 </div>
@@ -94,12 +78,8 @@
     </div>
     <div>
       <div>
-        <div class="mt-2" style="display:flex;flex-wrap:wrap">
-          <div
-            style="width:420px;min-height:800px;overflow:hidden"
-            v-for="(item,s) in list"
-            :key="s"
-          >
+        <div class="mt-2">
+          <div style="width:420px;min-height:1000px" v-for="(item,s) in option" :key="s">
             <center>
               <b-button class="btn btn-default center-block mt-2">{{item.start_date}}</b-button>
               <br>
@@ -253,7 +233,7 @@ export default {
     get() {
       var url = this.$host + "/focus-events/?is_top=0";
       this.$ajax.get(url).then(res => {
-        //  console.log(res.data)
+        // console.log(res.data)
         this.list = res.data;
       });
     },
@@ -273,11 +253,7 @@ export default {
     },
     // 查看编辑页面
     seeEdit(id) {
-      this.$router.push("/editors/events/" + id);
-    },
-    PlusDown(id) {
-      var url = this.$host + "/event-report/?event_id=" + id;
-      window.location.href = url;
+      this.$router.push('/editors/events/'+id)
     },
     // 根据日期筛选事件
     filterEvents() {
@@ -303,10 +279,8 @@ export default {
 </script>
 <style scope>
 @import "../Timeline.css";
-.swiper-slide {
-  width: 208.667px !important;
-  margin-right: 30px !important;
-  margin-left: 22px !important;
-}
+/* .swiper-slide{
+  margin-right:54px !important;
+} */
 </style>
 <style src="@/vendor/libs/vue-awesome-swiper/vue-awesome-swiper.scss" lang="scss"></style>

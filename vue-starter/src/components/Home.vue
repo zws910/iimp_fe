@@ -137,7 +137,8 @@
           <a
             href="javascript:void(0)"
             class="card-footer d-block text-center text-body small font-weight-semibold"
-          >SHOW MORE</a>
+            @click="moreInfo"
+          >加载更多</a>
         </b-card>
       </div>
     </div>
@@ -211,6 +212,7 @@ export default {
     SweetModalTab
   },
   data: () => ({
+    limit: 20,
     infoData: [],
     renderInfoList: [],
     items: [],
@@ -310,7 +312,7 @@ export default {
       this.$ajax
         .get(url, {
           params: {
-            limit: 30,
+            limit: this.limit,
             cat_id: JSON.stringify(this.selected)
           }
         })
@@ -327,6 +329,33 @@ export default {
           }
           this.renderInfoList = res.data;
         });
+    },
+
+    // 点击加载更多信息
+    moreInfo() {
+      var url = this.$host + "/infos/";
+      this.limit = this.limit + 20
+      this.$ajax
+        .get(url, {
+          params: {
+            limit: this.limit,
+            cat_id: JSON.stringify(this.selected)
+          }
+        })
+        .then(res => {
+          console.log(res)
+          for (var i = 0; i < res.data.length; i++) {
+            var target_str = res.data[i].targets;
+            if (target_str) {
+              var target_list = target_str.split(",");
+              target_list.pop();
+              res.data[i].targets = target_list;
+              var temp = this.stocks.concat(target_list);
+              this.stocks = temp;
+            } 
+          }
+          this.renderInfoList = res.data;
+        })
     },
 
     // 加载上周信息

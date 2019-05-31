@@ -5,6 +5,6 @@ export default [{
   component: Layout2,
   children: [{
     path: '',
-    component: () => import('@/components/Timeline2')
+    component: () => import('@/components/Timeline')
   }]
 }]
