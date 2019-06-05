@@ -9,6 +9,8 @@ import Popper from 'popper.js'
 
 import axios from 'axios'
 
+import PortalVue from 'portal-vue'
+
 // Required to enable animations on dropdowns/tooltips/popovers
 Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false
 
@@ -26,12 +28,10 @@ axios.interceptors.request.use((config) => {
 Vue.prototype.$ajax = axios
 
 // Global hosts
-Vue.prototype.$host = 'http://106.14.4.121:8000'
-// Vue.prototype.$host = 'http://127.0.0.1:8000'
+// Vue.prototype.$host = 'http://106.14.4.121:8000'
+Vue.prototype.$host = 'http://127.0.0.1:8000'
 
 Vue.use(BootstrapVue)
-
-import PortalVue from 'portal-vue'
 Vue.use(PortalVue)
 
 // Global RTL flag

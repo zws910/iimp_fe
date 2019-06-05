@@ -188,22 +188,22 @@
 </template>
 
 <script>
-import StarRate from "vue-cute-rate";
-import { swiper, swiperSlide } from "vue-awesome-swiper";
+import StarRate from 'vue-cute-rate'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
-  name: "typography",
+  name: 'typography',
   metaInfo: {
-    title: "内部信息管理平台 | 时间轴"
+    title: '内部信息管理平台 | 时间轴'
   },
   components: {
     StarRate,
     swiper,
     swiperSlide
   },
-  data() {
+  data () {
     return {
-      startDate: "",
-      endDate: "",
+      startDate: '',
+      endDate: '',
       list: [],
       option: [],
       content: [],
@@ -211,55 +211,55 @@ export default {
         slidesPerView: 6,
         spaceBetween: 30,
         pagination: {
-          el: ".swiper-pagination",
+          el: '.swiper-pagination',
           clickable: true
         },
         navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev"
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
         }
       }
-    };
+    }
   },
-  created() {
-    this.get();
-    this.getMore();
-    this.changeMore();
+  created () {
+    this.get()
+    this.getMore()
+    this.changeMore()
   },
-  mounted() {
-    this.filterEvents();
+  mounted () {
+    this.filterEvents()
   },
   methods: {
-    get() {
-      var url = this.$host + "/focus-events/?is_top=0";
+    get () {
+      var url = this.$host + '/focus-events/?is_top=0'
       this.$ajax.get(url).then(res => {
         // console.log(res.data)
-        this.list = res.data;
-      });
+        this.list = res.data
+      })
     },
-    getMore() {
-      var url = this.$host + "/focus-events/?is_top=1";
+    getMore () {
+      var url = this.$host + '/focus-events/?is_top=1'
       this.$ajax.get(url).then(res => {
         // console.log(res.data)
-        this.option = res.data;
-      });
+        this.option = res.data
+      })
     },
-    changeMore() {
-      var url = this.$host + "/focus-events/?is_top=0";
+    changeMore () {
+      var url = this.$host + '/focus-events/?is_top=0'
       this.$ajax.get(url).then(res => {
-        console.log(res.data);
-        this._data = res.data;
-      });
+        console.log(res.data)
+        this._data = res.data
+      })
     },
     // 查看编辑页面
-    seeEdit(id) {
-      this.$router.push('/editors/events/'+id)
+    seeEdit (id) {
+      this.$router.push('/editors/events/' + id)
     },
     // 根据日期筛选事件
-    filterEvents() {
-      var url = this.$host + "/events/";
-      console.log(this.startDate);
-      console.log(this.endDate);
+    filterEvents () {
+      var url = this.$host + '/events/'
+      console.log(this.startDate)
+      console.log(this.endDate)
       this.$ajax
         .get(url, {
           params: {
@@ -269,13 +269,13 @@ export default {
         })
         .then(res => {
           // console.log(res)
-          this.content = res.data;
-          console.log(res.data);
-          this.$forceUpdate();
-        });
+          this.content = res.data
+          console.log(res.data)
+          this.$forceUpdate()
+        })
     }
   }
-};
+}
 </script>
 <style scope>
 @import "../Timeline.css";

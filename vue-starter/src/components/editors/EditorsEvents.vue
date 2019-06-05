@@ -29,7 +29,6 @@
             <b-textarea v-model="eventData.target" :rows="3" required/>
           </b-form-group>
 
-
           <!-- <b-form-group label="Keywords">
             <b-input v-model="articleData.meta.keywords" />
           </b-form-group>-->
@@ -69,11 +68,20 @@ export default {
     // quillEditor: () => import('vue-quill-editor/dist/vue-quill-editor').then(m => m.quillEditor).catch(() => {})
   },
   data: () => ({
+    user_id: sessionStorage.user_id || localStorage.user_id,
+    token: sessionStorage.token || localStorage.token,
+    username: '',
+    nickname: '',
+    is_employee: '',
+
     event_id: '',
     eventData: {},
   }),
   created () {
     this.getId()
+    this.checkLogin()
+  },
+  beforeDestroy() {
   },
   destroyed () {
   },
@@ -81,20 +89,43 @@ export default {
     this.renderEvents()
   },
   methods: {
-    getId() {
-      this.event_id = this.$route.params.id;
+    checkLogin () {
+      if (this.user_id && this.token) {
+        var url = this.$host + '/user-profile/'
+        this.$ajax.get(url, {
+          headers: {
+            'Authorization': 'JWT ' + this.token
+          },
+          responseType: 'json'
+        }).then(res => {
+          // 加载用户数据
+          this.user_id = res.data.id
+          this.username = res.data.username
+          this.nickname = res.data.nickname
+          this.is_employee = res.data.is_employee
+        }).catch(error => {
+          if (error.response.status == 401 || error.response.status == 403) {
+            location.href = '/authentication/login'
+          }
+        })
+      } else {
+        location.href = '/authentication/login'
+      }
     },
-    renderEvents() {
+    getId () {
+      this.event_id = this.$route.params.id
+    },
+    renderEvents () {
       var url = this.$host + '/events-detail/' + this.event_id + '/'
       this.$ajax.get(url).then(response => {
         console.log(response.data)
-        this.eventData = response.data;
+        this.eventData = response.data
       })
     },
     // 点击提交
     onSubmit () {
       var url = this.$host + '/events-detail/' + this.event_id + '/editors/'
-      var username = 'admin' // 暂时写死
+      var username = this.username
       console.log(this.event_id)
       this.$ajax.put(url, {
         event_id: this.event_id,
@@ -102,7 +133,7 @@ export default {
         content: this.eventData.content,
         update: this.eventData.update,
         target: this.eventData.target,
-        feasibility: this.eventData.feasibility,
+        feasibility: this.eventData.feasibility
       }, {
         responseType: 'json'
       }).then(response => {
@@ -116,7 +147,7 @@ export default {
             console.log(error.response.status)
           }
         })
-    },
+    }
   }
 }
 </script>

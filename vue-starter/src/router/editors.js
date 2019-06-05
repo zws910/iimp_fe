@@ -12,5 +12,8 @@ export default [{
   }, {
     path: 'events/:id',
     component: () => import('@/components/editors/EditorsEvents.vue')
+  }, {
+    path: 'infos/:id',
+    component: () => import('@/components/editors/EditorsInfoDetails.vue')
   }]
 }]

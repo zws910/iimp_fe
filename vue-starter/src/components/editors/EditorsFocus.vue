@@ -99,6 +99,12 @@ export default {
     StarRate
   },
   data: () => ({
+    user_id: sessionStorage.user_id || localStorage.user_id,
+    token: sessionStorage.token || localStorage.token,
+    username: '',
+    nickname: '',
+    is_employee: '',
+
     focusData: {
       title: '',
       startDate: '',
@@ -117,6 +123,7 @@ export default {
     category: { 1: 'default' }
   }),
   created () {
+    this.checkLogin()
   },
   destroyed () {
   },
@@ -125,6 +132,29 @@ export default {
     this.getFocus()
   },
   methods: {
+    checkLogin () {
+      if (this.user_id && this.token) {
+        var url = this.$host + '/user-profile/'
+        this.$ajax.get(url, {
+          headers: {
+            'Authorization': 'JWT ' + this.token
+          },
+          responseType: 'json'
+        }).then(res => {
+          // 加载用户数据
+          this.user_id = res.data.id
+          this.username = res.data.username
+          this.nickname = res.data.nickname
+          this.is_employee = res.data.is_employee
+        }).catch(error => {
+          if (error.response.status == 401 || error.response.status == 403) {
+            location.href = '/authentication/login'
+          }
+        })
+      } else {
+        location.href = '/authentication/login'
+      }
+    },
     getFocus () {
       var url = this.$host + '/focus/'
       this.$ajax.get(url, {
@@ -168,7 +198,7 @@ export default {
         est_date: this.eventData.date,
         action: this.eventData.action,
         target: this.eventData.target,
-        author: username,
+        author: this.username,
         focus_id: this.eventData.focus,
         rating: this.eventData.rating
       }

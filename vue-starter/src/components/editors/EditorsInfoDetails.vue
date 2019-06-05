@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4 class="font-weight-bold py-3 mb-4">
-      资讯发布
+      编辑资讯
       <span class="text-muted"></span>
     </h4>
 
@@ -10,38 +10,25 @@
       <b-card no-body>
         <b-card-body class="pb-2">
           <b-form-group label="标题">
-            <b-input v-model="articleData.title" required/>
+            <b-input v-model="infoData.title" required/>
           </b-form-group>
-
+          
           <b-form-group label="类别">
             <b-select
-              v-model="articleData.category"
+              v-model="infoData.category"
               :options="category"
               class="flex-grow-1 col-3"
             />
           </b-form-group>
 
           <b-form-group label="内容">
-            <b-textarea v-model="articleData.content" :rows="3" required/>
+            <b-textarea v-model="infoData.content" :rows="3" required/>
           </b-form-group>
 
           <b-form-group label="标的">
-            <b-input-group>
-              <b-form-input list="my-list-id" class="flex-grow-1 col-3" v-model="selected"></b-form-input>
-                <datalist id="my-list-id">
-                  <!-- <option>Manual Option</option> -->
-                  <option v-for="share in shares" :key="share.full_code">{{ share.full_code }}, {{share.stock_name}}</option>
-                </datalist>
-              <span class="input-group-append">
-                <b-btn variant="primary" @click="onConfirm">确认</b-btn>
-              </span>
-            </b-input-group>
-            <p class="mt-3">{{ targets }}</p>
+            <b-textarea v-model="infoData.targets" :rows="3" required/>
           </b-form-group>
 
-          <!-- <b-form-group label="Keywords">
-            <b-input v-model="articleData.meta.keywords" />
-          </b-form-group>-->
         </b-card-body>
       </b-card>
 
@@ -69,9 +56,9 @@ import { constants } from 'crypto'
 // import Multiselect from 'vue-multiselect'
 
 export default {
-  name: 'pages-article-edit',
+  name: 'pages-infos-edit',
   metaInfo: {
-    title: '资讯发布'
+    title: '编辑资讯'
   },
   components: {
     // Multiselect,
@@ -84,28 +71,34 @@ export default {
     nickname: '',
     is_employee: '',
 
-    articleData: {
-      title: '',
-      category: 8,
-      content: ''
-    },
+    info_id: '',
+    infoData: {},
     cats: [],
     category: { 8: 'default' },
-
-    shares: [],
-    selected: null,
-    targets: ''
   }),
   created () {
+    this.getId()
     this.checkLogin()
+  },
+  beforeDestroy() {
   },
   destroyed () {
   },
   mounted () {
     this.getInfoCats()
-    this.getStockCode()
+    this.renderInfos()
   },
   methods: {
+    getInfoCats () {
+      var url = this.$host + '/info-cats/'
+      this.$ajax.get(url).then(res => {
+        console.log(res.data)
+        this.cats = res.data
+        for (var i = 0; i < res.data.length; i++) {
+          this.category[res.data[i].id] = res.data[i].name
+        }
+      })
+    },
     checkLogin () {
       if (this.user_id && this.token) {
         var url = this.$host + '/user-profile/'
@@ -129,30 +122,30 @@ export default {
         location.href = '/authentication/login'
       }
     },
-    getInfoCats () {
-      var url = this.$host + '/info-cats/'
-      this.$ajax.get(url).then(res => {
-        this.cats = res.data
-        for (var i = 0; i < res.data.length; i++) {
-          this.category[res.data[i].id] = res.data[i].name
-        }
+    getId () {
+      this.info_id = this.$route.params.id
+    },
+    renderInfos () {
+      var url = this.$host + '/infos-detail/' + this.info_id + '/'
+      this.$ajax.get(url).then(response => {
+        console.log(response.data)
+        this.infoData = response.data
       })
     },
     // 点击提交
     onSubmit () {
-      var url = this.$host + '/infos/'
-      var timestamp = Math.round(new Date().getTime() / 1000).toString()
-      this.$ajax.post(url, {
-        title: this.articleData.title,
-        content: this.articleData.content,
-        category: this.articleData.category,
-        targets: this.targets,
-        pub_timestamp: timestamp,
-        author: this.username
+      var url = this.$host + '/infos-detail/' + this.info_id + '/editors/'
+      var username = this.username
+      this.$ajax.put(url, {
+        info_id: this.info_id,
+        title: this.infoData.title,
+        content: this.infoData.content,
+        targets: this.infoData.targets,
+        category: this.infoData.category
       }, {
         responseType: 'json'
       }).then(response => {
-        alert('发布成功')
+        alert('编辑成功')
         window.location.reload()
       })
         .catch(error => {
@@ -162,23 +155,6 @@ export default {
             console.log(error.response.status)
           }
         })
-    },
-    // 获取股票代码
-    getStockCode () {
-      var url = this.$host + '/stock-code/'
-      this.$ajax.get(url).then(response => {
-        // console.log(response.data)
-        this.shares = response.data
-      })
-    },
-    // 点击确认
-    onConfirm () {
-      var data = this.selected
-      if (data) {
-        var full_code = data.slice(0, 9)
-        this.targets += full_code
-        this.targets += ','
-      }
     }
   }
 }

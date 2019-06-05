@@ -23,6 +23,14 @@
                   <span class="text-muted">发布于</span>
                   <!-- <a href="javascript:void(0)">Article Name</a> -->
                   <span class="text-muted small">{{ data.pub_timestamp*1000 | formatDate }}</span>
+                  <a
+                  href="javascript:void(0)"
+                  class="badge badge-default"
+                  >{{ data.category | formatCategory }}</a>
+                  <a
+                  href="javascript:void(0)"
+                  class="badge badge-default"
+                  >{{ data.ab_stock }}</a>
                   <p class="my-1">{{ data.title }}</p>
                   <p class="my-1">{{ data.content }}</p>
                   <!-- <p class="my-1">{{ data.targets }}</p> -->
@@ -56,8 +64,10 @@
             <input type="date" class="form-control" v-model="endDate">
           </b-form-group>
         </b-form>
-        <b-btn id="secondaryTooltip" title="如没有选择日期范围，生成" variant="primary" @click="handlePlus">生成</b-btn>
-        <b-btn id="btn1" @click="handleDown">下载</b-btn>
+        <div style="display:flex">
+          <b-btn id="secondaryTooltip" title="如没有选择日期范围，生成" variant="primary" @click="handlePlus">生成</b-btn>
+          <b-btn style="margin-left:20px" v-show="show" id="btn1" @click="handleDown">下载</b-btn>
+        </div>
       </div>
 
       <!-- 资讯流 -->
@@ -103,6 +113,7 @@
                   href="javascript:void(0)"
                   class="badge badge-default"
                 >{{ data.category | formatCategory }}</a>
+                <b-btn size="sm" variant="default" @click="seeEdit(data.id)" style="float: right">编辑</b-btn>
                 <span class="news-item-title">{{ data.title }}</span>
                 <pre
                   class="news-item-detail"
@@ -165,45 +176,45 @@ textarea {
 <style src="@/vendor/libs/vue-awesome-swiper/vue-awesome-swiper.scss" lang="scss"></style>
 
 <script>
-import Vue from "vue";
-import { formatDate } from "@/common/date.js";
-import { swiper, swiperSlide } from "vue-awesome-swiper";
-import { SweetModal, SweetModalTab } from "sweet-modal-vue";
+import Vue from 'vue'
+import { formatDate } from '@/common/date.js'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import { SweetModal, SweetModalTab } from 'sweet-modal-vue'
 
 // 异动url
-const unusualUrl = "http://qmx.jrjimg.cn/market.do";
+const unusualUrl = 'http://qmx.jrjimg.cn/market.do'
 
 // 异动类别 t
 const unusualTypes = [
-  { type: "大单买入", t: 5, d: 3, m: "sh" },
-  { type: "大单卖出", t: 6, d: 4, m: "sh" },
-  { type: "火箭发射", t: 12, d: 6, m: "sh" },
-  { type: "高台跳水", t: 13, d: 7, m: "sh" },
-  { type: "封涨停板", t: 8, d: 7, m: "sh" },
-  { type: "封跌停板", t: 9, d: 7, m: "sh" }
-];
+  { type: '大单买入', t: 5, d: 3, m: 'sh' },
+  { type: '大单卖出', t: 6, d: 4, m: 'sh' },
+  { type: '火箭发射', t: 12, d: 6, m: 'sh' },
+  { type: '高台跳水', t: 13, d: 7, m: 'sh' },
+  { type: '封涨停板', t: 8, d: 7, m: 'sh' },
+  { type: '封跌停板', t: 9, d: 7, m: 'sh' }
+]
 
 // 板块
 const info_cats_dic = [
-  { id: 1, name: "淘股吧" },
-  { id: 2, name: "36kr" },
-  { id: 3, name: "e公司" },
-  { id: 4, name: "选股宝" },
-  { id: 5, name: "腾讯科技" },
-  { id: 6, name: "深互动易" },
-  { id: 7, name: "沪互动易" },
-  { id: 8, name: "测试" }
-];
+  { id: 1, name: '淘股吧' },
+  { id: 2, name: '36kr' },
+  { id: 3, name: 'e公司' },
+  { id: 4, name: '选股宝' },
+  { id: 5, name: '腾讯科技' },
+  { id: 6, name: '深互动易' },
+  { id: 7, name: '沪互动易' },
+  { id: 8, name: '测试' }
+]
 
-const info_cats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const info_cats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 // var stockSet = new Set()
 // var stocks = []
 
 export default {
-  name: "dashboard-1",
+  name: 'dashboard-1',
   metaInfo: {
-    title: "主页"
+    title: '主页'
   },
   components: {
     swiper,
@@ -217,36 +228,37 @@ export default {
     renderInfoList: [],
     items: [],
     stocks: [],
+    show: false,
     stockSet: new Set(),
     codeSet: new Set(),
     marketsData: {},
     unusualData: [],
     abnormalData: [],
-    downUrl: "",
-    startDate: "",
-    endDate: "",
+    downUrl: '',
+    startDate: '',
+    endDate: '',
     selected: [11, 12],
     cat_options: [
-      { text: "测试", value: 8 },
-      { text: "一线", value: 11 },
-      { text: "内线", value: 12 }
+      { text: '测试', value: 8 },
+      { text: '一线', value: 11 },
+      { text: '内线', value: 12 }
     ],
 
     swiperWithPagination: {
       pagination: {
-        el: ".swiper-pagination",
+        el: '.swiper-pagination',
         clickable: true
       }
     },
 
     verticalSwiper: {
-      direction: "vertical",
+      direction: 'vertical',
       autoplay: {
         delay: 5000,
         disableOnInteraction: false
       },
       pagination: {
-        el: ".swiper-pagination",
+        el: '.swiper-pagination',
         clickable: true
       }
     },
@@ -255,60 +267,60 @@ export default {
     polling_unusual_data: null,
     polling_abnormal: null
   }),
-  created() {
+  created () {
     // this.initWebSocket()
-    this.pollRealMarket();
-    this.pollAbnormal();
+    this.pollRealMarket()
+    this.pollAbnormal()
   },
-  mounted() {
-    this.renderInfo();
-    this.getRealMarket();
+  mounted () {
+    this.renderInfo()
+    this.getRealMarket()
     // this.renderInfoWeek();
   },
-  beforeDestroy() {
-    clearInterval(this.polling_real_market);
+  beforeDestroy () {
+    clearInterval(this.polling_real_market)
     // clearInterval(this.polling_unusual_data)
-    clearInterval(this.polling_abnormal);
+    clearInterval(this.polling_abnormal)
   },
-  destroyed() {
+  destroyed () {
     // this.websock.close()
   },
   methods: {
-    initWebSocket() {
-      const wsuri = "ws://127.0.0.1:8000/info-push/";
+    initWebSocket () {
+      const wsuri = 'ws://127.0.0.1:8000/info-push/'
       // const wsuri = 'wss://realtime-prod.wallstreetcn.com/ws'
-      this.websock = new WebSocket(wsuri);
-      this.websock.onmessage = this.websocketonmessage;
-      this.websock.onopen = this.websocketonopen;
-      this.websock.onerror = this.websocketonerror;
-      this.websock.onclose = this.websocketclose;
+      this.websock = new WebSocket(wsuri)
+      this.websock.onmessage = this.websocketonmessage
+      this.websock.onopen = this.websocketonopen
+      this.websock.onerror = this.websocketonerror
+      this.websock.onclose = this.websocketclose
     },
-    websocketonopen() {
-      console.log("open!");
+    websocketonopen () {
+      console.log('open!')
       let actions = {
-        command: "ENTER_CHANNEL",
-        data: { chann_name: "baoer-msg-pc-724", cursor: "" }
-      };
-      this.websocketsend(JSON.stringify(actions));
+        command: 'ENTER_CHANNEL',
+        data: { chann_name: 'baoer-msg-pc-724', cursor: '' }
+      }
+      this.websocketsend(JSON.stringify(actions))
     },
-    websocketonerror() {
-      this.initWebSocket();
+    websocketonerror () {
+      this.initWebSocket()
     },
-    websocketonmessage(e) {
-      const redata = JSON.parse(e.data);
-      console.log(redata);
-      this.infoData = redata;
+    websocketonmessage (e) {
+      const redata = JSON.parse(e.data)
+      console.log(redata)
+      this.infoData = redata
     },
-    websocketsend(Data) {
-      this.websock.send(Data);
+    websocketsend (Data) {
+      this.websock.send(Data)
     },
-    websocketclose(e) {
-      console.log("断开连接", e);
+    websocketclose (e) {
+      console.log('断开连接', e)
     },
 
     // 加载信息
-    renderInfo() {
-      var url = this.$host + "/infos/";
+    renderInfo () {
+      var url = this.$host + '/infos/'
       this.$ajax
         .get(url, {
           params: {
@@ -318,22 +330,22 @@ export default {
         })
         .then(res => {
           for (var i = 0; i < res.data.length; i++) {
-            var target_str = res.data[i].targets;
+            var target_str = res.data[i].targets
             if (target_str) {
-              var target_list = target_str.split(",");
-              target_list.pop();
-              res.data[i].targets = target_list;
-              var temp = this.stocks.concat(target_list);
-              this.stocks = temp;
+              var target_list = target_str.split(',')
+              target_list.pop()
+              res.data[i].targets = target_list
+              var temp = this.stocks.concat(target_list)
+              this.stocks = temp
             }
           }
-          this.renderInfoList = res.data;
-        });
+          this.renderInfoList = res.data
+        })
     },
 
     // 点击加载更多信息
-    moreInfo() {
-      var url = this.$host + "/infos/";
+    moreInfo () {
+      var url = this.$host + '/infos/'
       this.limit = this.limit + 20
       this.$ajax
         .get(url, {
@@ -345,22 +357,22 @@ export default {
         .then(res => {
           console.log(res)
           for (var i = 0; i < res.data.length; i++) {
-            var target_str = res.data[i].targets;
+            var target_str = res.data[i].targets
             if (target_str) {
-              var target_list = target_str.split(",");
-              target_list.pop();
-              res.data[i].targets = target_list;
-              var temp = this.stocks.concat(target_list);
-              this.stocks = temp;
-            } 
+              var target_list = target_str.split(',')
+              target_list.pop()
+              res.data[i].targets = target_list
+              var temp = this.stocks.concat(target_list)
+              this.stocks = temp
+            }
           }
-          this.renderInfoList = res.data;
+          this.renderInfoList = res.data
         })
     },
 
     // 加载上周信息
-    renderInfoWeek() {
-      var url = this.$host + "/info-week/";
+    renderInfoWeek () {
+      var url = this.$host + '/info-week/'
       this.$ajax
         .get(url, {
           params: {
@@ -368,20 +380,25 @@ export default {
           }
         })
         .then(res => {
-          console.log(res.data);
-        });
+          console.log(res.data)
+        })
+    },
+
+    // 查看编辑页面
+    seeEdit (id) {
+      this.$router.push('/editors/infos/' + id)
     },
 
     // 请求 实时涨跌行情
-    getRealMarket() {
-      var url = this.$host + "/real-market/";
+    getRealMarket () {
+      var url = this.$host + '/real-market/'
 
       for (var i = 0; i < this.stocks.length; i++) {
-        this.stockSet.add(this.stocks[i]);
+        this.stockSet.add(this.stocks[i])
       }
-      var queryStr = "";
+      var queryStr = ''
       for (let item of this.stockSet) {
-        queryStr += item + ",";
+        queryStr += item + ','
       }
 
       if (queryStr) {
@@ -392,46 +409,46 @@ export default {
             }
           })
           .then(response => {
-            this.marketsData = response.data;
-          });
+            this.marketsData = response.data
+          })
       }
     },
 
-    pollRealMarket() {
+    pollRealMarket () {
       this.polling_real_market = setInterval(() => {
-        this.getRealMarket();
-      }, 10000);
+        this.getRealMarket()
+      }, 10000)
     },
 
     // 请求 异动提醒 大幅拉升 (选股宝爬虫)
-    getAbnormal() {
-      this.$ajax.get(this.$host + "/abnormal/").then(res => {
-        console.log(res.data);
-        this.abnormalData = res.data;
-      });
+    getAbnormal () {
+      this.$ajax.get(this.$host + '/abnormal/').then(res => {
+        console.log(res.data)
+        this.abnormalData = res.data
+      })
     },
 
-    pollAbnormal() {
+    pollAbnormal () {
       this.polling_abnormal = setInterval(() => {
-        this.getAbnormal();
-      }, 10000);
+        this.getAbnormal()
+      }, 10000)
     },
 
     // 跳转 查看今日所有大幅拉升
-    toDailyAbnormal() {
-      var url = this.$host + "/markets/daily-abnormal/";
-      window.open(url);
+    toDailyAbnormal () {
+      var url = this.$host + '/markets/daily-abnormal/'
+      window.open(url)
     },
-    showSlideModal() {
-      this.$refs.slideModal.show();
+    showSlideModal () {
+      this.$refs.slideModal.show()
     },
-    hideSlideModal() {
-      this.$refs.slideModal.hide();
+    hideSlideModal () {
+      this.$refs.slideModal.hide()
     },
 
-    handlePlus() {
-      var url = this.$host + "/inside/";
-      document.getElementById("btn1").style.display = "block";
+    handlePlus () {
+      var url = this.$host + '/inside/'
+      document.getElementById('btn1').style.display = 'block'
       this.$ajax
         .get(url, {
           params: {
@@ -440,53 +457,54 @@ export default {
           }
         })
         .then(res => {
-          var filename = res.data.filename;
-          this.downUrl = this.$host + "/inside-down/?filename=" + filename;
-          console.log(this.downUrl);
-        });
+          var filename = res.data.filename
+          this.downUrl = this.$host + '/inside-down/?filename=' + filename
+          console.log(this.downUrl)
+        })
+        this.show =!this.show
     },
 
-    handleDown() {
-      location.href = this.downUrl;
+    handleDown () {
+      location.href = this.downUrl
     }
   },
 
   filters: {
     // 时间戳转换时间
-    formatDate(time) {
-      var date = new Date(time);
-      return formatDate(date, "yyyy-MM-dd hh:mm");
+    formatDate (time) {
+      var date = new Date(time)
+      return formatDate(date, 'yyyy-MM-dd hh:mm')
     },
     // 取股票名称
-    formatName(data) {
+    formatName (data) {
       if (data) {
-        var name = data[0];
-        return name;
+        var name = data[0]
+        return name
       }
     },
 
     // 转换涨跌幅百分比
-    formatRate(data) {
+    formatRate (data) {
       if (data) {
-        var rate = data[1];
-        var newRate = rate.toFixed(2);
-        newRate += "%";
-        return newRate;
+        var rate = data[1]
+        var newRate = rate.toFixed(2)
+        newRate += '%'
+        return newRate
       }
     },
 
     // 转换category
-    formatCategory(data) {
+    formatCategory (data) {
       const cat_dic = {
-        8: "测试",
-        9: "观点",
-        10: "养家",
-        11: "一线",
-        12: "内线"
-      };
-      var newData = cat_dic[data];
-      return newData;
+        8: '测试',
+        9: '观点',
+        10: '养家',
+        11: '一线',
+        12: '内线'
+      }
+      var newData = cat_dic[data]
+      return newData
     }
   }
-};
+}
 </script>
