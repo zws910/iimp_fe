@@ -28,7 +28,8 @@
                   class="badge badge-default"
                   >{{ data.category | formatCategory }}</a>
                   <a
-                  href="javascript:void(0)"
+                  :href="'https://xuangubao.cn/stock/'+data.ab_stock"
+                  target="_blank"
                   class="badge badge-default"
                   >{{ data.ab_stock }}</a>
                   <p class="my-1">{{ data.title }}</p>
@@ -36,11 +37,13 @@
                   <!-- <p class="my-1">{{ data.targets }}</p> -->
                   <div class="clearfix">
                     <div class="news-item-intro">
-                      <ul class="stock-group" v-for="target in data.targets" :key="target">
-                        <li class="stock-group-item">
-                          <span class="stock-group-name">{{ marketsData[target] | formatName }}</span>
-                          <span class="stock-group-rate">{{ marketsData[target] | formatRate }}</span>
-                        </li>
+                      <ul class="stock-group">
+                        <a :href="'https://xuangubao.cn/stock/'+target"  v-for="target in data.targets" :key="target" target="_blank" style="color: #666666">
+                          <li class="stock-group-item">
+                            <span class="stock-group-name">{{ marketsData[target] | formatName }}</span>
+                            <span class="stock-group-rate">{{ marketsData[target] | formatRate }}</span>
+                          </li>
+                        </a>
                       </ul>
                     </div>
                   </div>
@@ -113,7 +116,7 @@
                   href="javascript:void(0)"
                   class="badge badge-default"
                 >{{ data.category | formatCategory }}</a>
-                <b-btn size="sm" variant="default" @click="seeEdit(data.id)" style="float: right">编辑</b-btn>
+                <b-btn size="sm" variant="default" @click="seeEdit(data.id)" style="float: right" v-show="is_employee">编辑</b-btn>
                 <span class="news-item-title">{{ data.title }}</span>
                 <pre
                   class="news-item-detail"
@@ -124,11 +127,13 @@
                 ></pre>
                 <div class="clearfix">
                   <div class="news-item-intro">
-                    <ul class="stock-group" v-for="target in data.targets" :key="target">
-                      <li class="stock-group-item">
-                        <span class="stock-group-name">{{ marketsData[target] | formatName }}</span>
-                        <span class="stock-group-rate">{{ marketsData[target] | formatRate }}</span>
-                      </li>
+                    <ul class="stock-group">
+                      <a :href="'https://xuangubao.cn/stock/'+target"  v-for="target in data.targets" :key="target" target="_blank" style="color: #666666">
+                        <li class="stock-group-item">
+                          <span class="stock-group-name">{{ marketsData[target] | formatName }}</span>
+                          <span class="stock-group-rate">{{ marketsData[target] | formatRate }}</span>
+                        </li>
+                      </a>
                     </ul>
                   </div>
                   <!-- <a href="javascript:void(0)" class="float-right text-lightest small">
@@ -223,6 +228,12 @@ export default {
     SweetModalTab
   },
   data: () => ({
+    user_id: sessionStorage.user_id || localStorage.user_id,
+    token: sessionStorage.token || localStorage.token,
+    username: '',
+    nickname: '',
+    is_employee: '',
+
     limit: 20,
     infoData: [],
     renderInfoList: [],
@@ -273,6 +284,7 @@ export default {
     this.pollAbnormal()
   },
   mounted () {
+    this.checkLogin()
     this.renderInfo()
     this.getRealMarket()
     // this.renderInfoWeek();
@@ -286,6 +298,31 @@ export default {
     // this.websock.close()
   },
   methods: {
+    checkLogin () {
+      if (this.user_id && this.token) {
+        var url = this.$host + '/user-profile/'
+        this.$ajax.get(url, {
+          headers: {
+            'Authorization': 'JWT ' + this.token
+          },
+          responseType: 'json'
+        }).then(res => {
+          // 加载用户数据
+          this.user_id = res.data.id
+          this.username = res.data.username
+          this.nickname = res.data.nickname
+          this.is_employee = res.data.is_employee
+
+          console.log(this.is_employee)
+        }).catch(error => {
+          if (error.response.status == 401 || error.response.status == 403) {
+            location.href = '/authentication/login'
+          }
+        })
+      } else {
+        location.href = '/authentication/login'
+      }
+    },
     initWebSocket () {
       const wsuri = 'ws://127.0.0.1:8000/info-push/'
       // const wsuri = 'wss://realtime-prod.wallstreetcn.com/ws'
