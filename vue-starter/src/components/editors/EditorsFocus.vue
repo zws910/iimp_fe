@@ -34,7 +34,7 @@
           </h4>
           <b-card-body class="pb-2">
             <b-form-group label="标题">
-              <b-textarea v-model="eventData.title" required/>
+              <b-textarea v-model="eventData.title"/>
             </b-form-group>
 
             <!-- <b-form-group label="选择焦点">
@@ -53,11 +53,11 @@
             </b-form-group>
 
             <b-form-group label="操作">
-              <b-input v-model="eventData.action" required/>
+              <b-input v-model="eventData.action"/>
             </b-form-group>
 
             <b-form-group label="标的">
-              <b-textarea v-model="eventData.target" required/>
+              <b-textarea v-model="eventData.target"/>
             </b-form-group>
 
             <b-form-group label="评级">

@@ -13,6 +13,7 @@ import editorsRoutes from './editors'
 import marketsRoutes from './markets'
 import authRoutes from './authentication'
 import testRoutes from './test'
+import wechathomeRoutes from './wechathome'
 
 Vue.use(Router)
 Vue.use(Meta)
@@ -27,6 +28,7 @@ const ROUTES = [
   .concat(marketsRoutes)
   .concat(authRoutes)
   .concat(testRoutes)
+  .concat(wechathomeRoutes)
 
 const router = new Router({
   base: '/',

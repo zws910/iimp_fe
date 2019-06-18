@@ -10,11 +10,11 @@
       <b-card no-body>
         <b-card-body class="pb-2">
           <b-form-group label="标题">
-            <b-input v-model="eventData.title" required/>
+            <b-input v-model="eventData.title"/>
           </b-form-group>
 
           <b-form-group label="内容">
-            <b-textarea v-model="eventData.content" :rows="3" required/>
+            <b-textarea v-model="eventData.content" :rows="3"/>
           </b-form-group>
 
           <b-form-group label="最新进展">
@@ -26,7 +26,7 @@
           </b-form-group>
 
           <b-form-group label="标的">
-            <b-textarea v-model="eventData.target" :rows="3" required/>
+            <b-textarea v-model="eventData.target" :rows="3"/>
           </b-form-group>
 
           <!-- <b-form-group label="Keywords">

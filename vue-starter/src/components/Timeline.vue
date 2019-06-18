@@ -16,19 +16,22 @@
         @click="filterEvents"
       >查看</button>
     </div>
-    <div style="width:100%;min-height:300px;background:#eee;">
+    <div class="timebox mt-2">
       <div>
         <swiper class="swiper-container" :options="swiperMultipleSlides">
           <swiper-slide v-for="(item,i) in content" :key="i">
-            <div style="width:240px;padding-top:5px;">
-              <div
-                class="card card-condenced mt-3"
-                style="max-width:20rem;height:470px;margin-bottom:10px;font-family:Simsun;"
-              >
-                <div class="card-header">
-                  <span style="color:red">{{item.est_date}}</span>
-                  <b-btn size="sm" variant="default" @click="seeEdit(item.id)">编辑</b-btn>
-                  <b-btn size="sm" variant="default" :id="item.id" v-b-modal="'f'+item.id">详情</b-btn>
+            <div class="timeline-line"></div>
+            <div style="width:240px;">
+              <div class="timeline-condenced mt-3" >
+                <div class="timeline-header">
+                  <span class="time-date">{{item.est_date | formatDate}}</span>
+                  <b-btn
+                    size="sm"
+                    variant="default"
+                    @click="seeEdit(item.id)"
+                    v-show="is_employee"
+                  >编辑</b-btn>
+                  <b-btn class="btn-right" size="sm" variant="default" :id="item.id" v-b-modal="'f'+item.id" style="display:none">详情</b-btn>
                   <b-modal size="xl" :id="'f'+item.id" scrollable :title="item.title">
                     <div>
                       <b style="color:red">事件</b>
@@ -57,31 +60,35 @@
                     </div>
                   </b-modal>
                 </div>
+                <div class="timeline-title">
+                   <h6 class="mt-2">{{item.title}}</h6>
+                </div>
+                 
                 <div>
-                  <div class="card-body">
-                    <p
+                  <div class="timeline-body">
+                    <!-- <p
                       style="height:24px;overflow:hidden;font-size:14px;text-align:center"
                       class="card-text"
-                    >{{item.title}}</p>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">{{item.action}}</li>
-                    <li
-                      class="list-group-item"
-                      style="word-wrap: break-word;overflow:hidden;text-overflow: ellipsis;height:120px;"
-                    >
-                      <span>{{item.content}}</span>
-                    </li>
-                    <li
+                    >{{item.title}}</p>-->
+                    <ul class="list-group list-group-flush mt-3">
+                      <!-- <li class="list-group-item">{{item.action}}</li> -->
+                      <li class="list-group-item time-list-group">
+                        <span class="title-span">事件内容</span>
+                        <br>
+                        <span>{{item.content}}</span>
+                      </li>
+                      <!-- <li
                       class="list-group-item"
                       style="word-wrap: break-word;overflow:hidden;text-overflow: ellipsis;height:157px;"
                     >
                       <span>{{item.target}}</span>
-                    </li>
-                  </ul>
+                      </li>-->
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
+            
           </swiper-slide>
           <div slot="button-prev" class="swiper-button-prev custom-icon">
             <i class="ion ion-ios-arrow-back text-muted small"></i>
@@ -208,22 +215,29 @@
 </template>
 
 <script>
-import StarRate from 'vue-cute-rate'
-import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import StarRate from "vue-cute-rate";
+import { swiper, swiperSlide } from "vue-awesome-swiper";
+import { formatDate } from '@/common/date.js';
 export default {
-  name: 'typography',
+  name: "typography",
   metaInfo: {
-    title: '内部信息管理平台 | 时间轴'
+    title: "内部信息管理平台 | 时间轴"
   },
   components: {
     StarRate,
     swiper,
     swiperSlide
   },
-  data () {
+  data() {
     return {
-      startDate: '',
-      endDate: '',
+      user_id: sessionStorage.user_id || localStorage.user_id,
+      token: sessionStorage.token || localStorage.token,
+      username: "",
+      nickname: "",
+      is_employee: 0,
+
+      startDate: "",
+      endDate: "",
       list: [],
       option: [],
       content: [],
@@ -231,59 +245,87 @@ export default {
         slidesPerView: 6,
         spaceBetween: 30,
         pagination: {
-          el: '.swiper-pagination',
+          el: ".swiper-pagination",
           clickable: true
         },
         navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev'
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev"
         }
       }
-    }
+    };
   },
-  created () {
-    this.get()
-    this.getMore()
-    this.changeMore()
+  created() {
+    this.get();
+    this.getMore();
+    this.changeMore();
   },
-  mounted () {
-    this.filterEvents()
+  mounted() {
+    this.filterEvents();
+    this.checkLogin();
   },
   methods: {
-    get () {
-      var url = this.$host + '/focus-events/?is_top=0'
+    checkLogin() {
+      if (this.user_id && this.token) {
+        var url = this.$host + "/user-profile/";
+        this.$ajax
+          .get(url, {
+            headers: {
+              Authorization: "JWT " + this.token
+            },
+            responseType: "json"
+          })
+          .then(res => {
+            // 加载用户数据
+            this.user_id = res.data.id;
+            this.username = res.data.username;
+            this.nickname = res.data.nickname;
+            this.is_employee = res.data.is_employee;
+            // console.log(this.is_employee)
+          })
+          .catch(error => {
+            if (error.response.status == 401 || error.response.status == 403) {
+              location.href = "/authentication/login";
+            }
+          });
+      } else {
+        location.href = "/authentication/login";
+      }
+    },
+    get() {
+      var url = this.$host + "/focus-events/?is_top=0";
       this.$ajax.get(url).then(res => {
         //  console.log(res.data)
-        this.list = res.data
-      })
+        this.list = res.data;
+      });
     },
-    getMore () {
-      var url = this.$host + '/focus-events/?is_top=1'
+    getMore() {
+      var url = this.$host + "/focus-events/?is_top=1";
       this.$ajax.get(url).then(res => {
         // console.log(res.data)
-        this.option = res.data
-      })
+        this.option = res.data;
+      });
     },
-    changeMore () {
-      var url = this.$host + '/focus-events/?is_top=0'
+    changeMore() {
+      var url = this.$host + "/focus-events/?is_top=0";
       this.$ajax.get(url).then(res => {
-        console.log(res.data)
-        this._data = res.data
-      })
+        console.log(res.data);
+        this._data = res.data;
+      });
     },
     // 查看编辑页面
-    seeEdit (id) {
-      this.$router.push('/editors/events/' + id)
+    seeEdit(id) {
+      this.$router.push("/editors/events/" + id);
     },
-    PlusDown (id) {
-      var url = this.$host + '/event-report/?event_id=' + id
-      window.location.href = url
+    PlusDown(id) {
+      var url = this.$host + "/event-report/?event_id=" + id;
+      window.location.href = url;
     },
     // 根据日期筛选事件
-    filterEvents () {
-      var url = this.$host + '/events/'
-      console.log(this.startDate)
-      console.log(this.endDate)
+    filterEvents() {
+      var url = this.$host + "/events/";
+      console.log(this.startDate);
+      console.log(this.endDate);
       this.$ajax
         .get(url, {
           params: {
@@ -293,20 +335,38 @@ export default {
         })
         .then(res => {
           // console.log(res)
-          this.content = res.data
-          console.log(res.data)
-          this.$forceUpdate()
-        })
+          this.content = res.data;
+          console.log(res.data);
+          this.$forceUpdate();
+        });
+    }
+  },
+    filters: {
+    formatDate (time) {
+      var date = new Date(time)
+      return formatDate(date, 'MM月dd日')
     }
   }
-}
+};
 </script>
 <style scope>
 @import "../Timeline.css";
 .swiper-slide {
-  width: 208.667px !important;
-  margin-right: 30px !important;
-  margin-left: 22px !important;
+  width: 250px !important;
+  /* margin-right: 30px !important; */
+  /* margin-left: 22px !important; */
+  /* border-top: 1px solid rgb(253,60,47); */
+  background: url('../../public/img/circle.png') no-repeat;
+  background-position: 0px 5px;
+  background-size: 10px 10px
+  
+}
+.timeline-line{
+    width: 242px;
+    height: 1px;
+    margin-top: 10px;
+    margin-left: 9px;
+    background: rgb(253,60,47);
 }
 </style>
 <style src="@/vendor/libs/vue-awesome-swiper/vue-awesome-swiper.scss" lang="scss"></style>
