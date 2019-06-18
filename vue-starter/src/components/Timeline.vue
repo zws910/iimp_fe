@@ -256,13 +256,13 @@ export default {
     };
   },
   created() {
+  },
+  mounted() {
+    this.checkLogin();
+    this.filterEvents();
     this.get();
     this.getMore();
     this.changeMore();
-  },
-  mounted() {
-    this.filterEvents();
-    this.checkLogin();
   },
   methods: {
     checkLogin() {
@@ -281,7 +281,7 @@ export default {
             this.username = res.data.username;
             this.nickname = res.data.nickname;
             this.is_employee = res.data.is_employee;
-            // console.log(this.is_employee)
+            console.log(this.is_employee)
           })
           .catch(error => {
             if (error.response.status == 401 || error.response.status == 403) {

@@ -111,6 +111,7 @@ export default {
       endDate: ''
     },
     eventData: {
+      title: '',
       focus: 5,
       content: '',
       date: '',
@@ -194,6 +195,7 @@ export default {
       var url = this.$host + '/events/'
       var username = 'admin'
       var postData = {
+        title: this.eventData.title,
         content: this.eventData.content,
         est_date: this.eventData.date,
         action: this.eventData.action,
